@@ -17,8 +17,8 @@ namespace CetBlogApp.Models
         public string Body { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        public string CetUserId { get; set; }
-        public virtual CetUser CetUser { get; set; }
+        public string? CetUserId { get; set; }
+        public virtual CetUser? CetUser { get; set; }
 
     }
 }

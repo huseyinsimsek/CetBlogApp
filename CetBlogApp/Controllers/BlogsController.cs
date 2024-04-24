@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CetBlogApp.Data;
 using CetBlogApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using SQLitePCL;
 
 namespace CetBlogApp.Controllers
 {
@@ -72,7 +73,7 @@ namespace CetBlogApp.Controllers
             
            
         }
-
+        [Authorize]
         // GET: Blogs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -81,12 +82,25 @@ namespace CetBlogApp.Controllers
                 return NotFound();
             }
 
+            //var blog = await _context.Blogs.FirstOrDefaultAsync(b=>b.Id==id && b.CetUser.UserName == User.Identity.Name);
+
+            //if (blog == null)
+            //{
+            //    return NotFound();
+            //}
+
+
             var blog = await _context.Blogs.FindAsync(id);
             if (blog == null)
             {
                 return NotFound();
             }
-            ViewData["CetUserId"] = new SelectList(_context.Users, "Id", "Id", blog.CetUserId);
+
+            var userID = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id;
+            if (blog.CetUserId != userID)
+            {
+                return Unauthorized();
+            }
             return View(blog);
         }
 
@@ -95,6 +109,7 @@ namespace CetBlogApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,CreatedDate,CetUserId")] Blog blog)
         {
             if (id != blog.Id)
@@ -106,6 +121,7 @@ namespace CetBlogApp.Controllers
             {
                 try
                 {
+                    
                     _context.Update(blog);
                     await _context.SaveChangesAsync();
                 }
@@ -122,7 +138,7 @@ namespace CetBlogApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CetUserId"] = new SelectList(_context.Users, "Id", "Id", blog.CetUserId);
+            
             return View(blog);
         }
 
