@@ -1,0 +1,23 @@
+﻿@model CetBlogApp.Models.Blog
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Model.Title</h1>
+<hr />
+<div>
+   
+  
+    <p>
+    @Model.Body
+    </p>
+    <p>
+        Author  <i>@Model.CetUser.Name @Model.CetUser.Surname</i>  Date <i>@Model.CreatedDate.ToLongDateString()</i>
+    </p>
+   
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
